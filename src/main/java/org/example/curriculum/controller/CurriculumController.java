@@ -16,6 +16,11 @@ public class CurriculumController {
     @Value("${cv.nombre}")
     private String nombreCv;
 
+    @GetMapping("/")
+    public String inicio() {
+        return "redirect:/curriculum";
+    }
+
     @GetMapping("/curriculum")
     public String curriculum(Model model) {
         String contacto = "luciadtl@icloud.com";
