@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<nav th:fragment="menu">
+    <a th:href="@{/curriculum}" th:text="#{nav.curriculum}"></a>
+    <a th:href="@{/portfolio}" th:text="#{nav.portfolio}"></a>
+    <a th:href="@{/portfolio/editar}" th:text="#{nav.editar}"></a>
+    <a href="?lang=es">ES</a>
+    <a href="?lang=en">EN</a>
+</nav>
+</body>
+</html>

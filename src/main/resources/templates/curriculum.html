@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${nombre}">Currículum</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body>
+<div th:replace="~{fragments :: menu}"></div>
+
+<main>
+    <!-- Como el enunciado prohíbe JavaScript, no puedo poner un botón que abra la impresión, he optado por poner un comentario para indicar los atajos de teclado -->
+    <p class="print-instructions" th:text="#{cv.instruccionesImpresion}"></p>
+
+    <section>
+        <h1 th:text="${nombre}"></h1>
+        <h2 th:text="#{cv.titular}"></h2>
+        <p th:text="#{cv.presentacion}"></p>
+    </section>
+
+    <section th:if="${contacto != null and !contacto.isBlank()}">
+        <h2 th:text="#{cv.contacto}"></h2>
+        <p th:text="${contacto}"></p>
+    </section>
+
+    <section>
+        <h2 th:text="#{cv.formacion}"></h2>
+        <ul>
+            <li th:each="e : ${formacion}">
+                <span th:text="|#{${e.nombre()}} — #{${e.centro()}}|"></span>
+                (<span th:if="${e.enCurso()}" th:text="#{cv.enCurso}"></span><span th:unless="${e.enCurso()}" th:text="${e.anio()}"></span>)
+            </li>
+        </ul>
+    </section>
+
+    <section>
+        <h2 th:text="#{cv.experiencia}"></h2>
+        <p th:if="${#arrays.isEmpty(experiencia)}" th:text="#{cv.sinExperiencia}"></p>
+        <ul th:unless="${#arrays.isEmpty(experiencia)}">
+            <li th:each="x : ${experiencia}"
+                th:text="|#{${x.puesto()}} — #{${x.organizacion()}} (${x.periodo()})|"></li>
+        </ul>
+    </section>
+
+    <section>
+        <h2 th:text="#{cv.habilidades}"></h2>
+        <ul class="habilidades-lista">
+            <li class="habilidad-item" th:each="h : ${habilidades}">
+                <img class="habilidad-logo" th:src="${h.logo()}" th:alt="${h.nombre()}">
+                <span th:switch="${h.nivel()}">
+                    <span th:case="'alto'" class="nivel-alto" th:text="|${h.nombre()} — #{nivel.alto}|"></span>
+                    <span th:case="'medio'" class="nivel-medio" th:text="|${h.nombre()} — #{nivel.medio}|"></span>
+                    <span th:case="'bajo'" class="nivel-bajo" th:text="|${h.nombre()} — #{nivel.bajo}|"></span>
+                </span>
+            </li>
+        </ul>
+    </section>
+
+    <section>
+        <h2 th:text="#{cv.idiomas}"></h2>
+        <ul>
+            <li th:each="i : ${idiomas}" th:switch="${i.nivel()}">
+                <span th:case="'alto'" class="nivel-alto" th:text="|#{${i.clave()}} — #{nivel.alto}|"></span>
+                <span th:case="'medio'" class="nivel-medio" th:text="|#{${i.clave()}} — #{nivel.medio}|"></span>
+                <span th:case="'bajo'" class="nivel-bajo" th:text="|#{${i.clave()}} — #{nivel.bajo}|"></span>
+            </li>
+        </ul>
+    </section>
+</main>
+</body>
+</html>

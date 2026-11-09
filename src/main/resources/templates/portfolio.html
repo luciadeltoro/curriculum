@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="#{nav.portfolio}">Portfolio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body>
+<div th:replace="~{fragments :: menu}"></div>
+
+<main>
+    <h1 th:text="#{nav.portfolio}"></h1>
+
+    <form method="get" th:action="@{/portfolio}">
+        <div>
+            <label for="categoria" th:text="#{portfolio.categoria}"></label>
+            <select id="categoria" name="categoria">
+                <option value="TODAS" th:selected="${categoriaSel == 'TODAS'}" th:text="#{categoria.TODAS}"></option>
+                <option th:each="c : ${categorias}"
+                        th:value="${c.name()}"
+                        th:selected="${c.name() == categoriaSel}"
+                        th:text="#{|categoria.${c.name()}|}"></option>
+            </select>
+        </div>
+
+        <div>
+            <label for="anio" th:text="#{portfolio.anio}"></label>
+            <input type="number" id="anio" name="anio" th:value="${anioSel}">
+        </div>
+
+        <button type="submit" th:text="#{portfolio.filtrar}"></button>
+        <a th:href="@{/portfolio}" th:text="#{portfolio.mostrarTodos}"></a>
+    </form>
+
+    <p th:if="${anioInvalido}" th:text="#{portfolio.anioInvalido}"></p>
+
+    <p th:text="#{portfolio.resultados(${proyectos.size()})}"></p>
+    <p th:if="${proyectos.isEmpty()}" th:text="#{portfolio.sinResultados}"></p>
+
+    <article th:each="p : ${proyectos}">
+        <h2 th:text="${p.titulo()}"></h2>
+
+        <img th:if="${p.imagen() != null}"
+             th:src="@{${p.imagen()}}"
+             th:alt="#{portfolio.imagenAlt(${p.titulo()})}">
+
+        <p>
+            <span th:text="${p.anio()}"></span> ·
+            <span th:text="#{|categoria.${p.categoria().name()}|}"></span>
+        </p>
+
+        <span th:switch="${p.estado().name()}">
+            <span th:case="'EN_CURSO'" class="etiqueta-verde" th:text="#{estado.EN_CURSO}"></span>
+            <span th:case="'TERMINADO'" class="etiqueta-gris" th:text="#{estado.TERMINADO}"></span>
+        </span>
+
+        <p th:text="${#locale.language == 'en' ? p.descripcionEn() : p.descripcion()}"></p>
+
+        <div th:if="${!p.tecnologias().isEmpty()}">
+            <h3 th:text="#{portfolio.tecnologias}"></h3>
+            <span class="etiqueta" th:each="t : ${p.tecnologias()}" th:text="${t}"></span>
+        </div>
+
+        <a th:if="${p.enlace() != null and !p.enlace().isBlank()}"
+           th:href="${p.enlace()}" th:text="#{portfolio.verProyecto}"></a>
+    </article>
+</main>
+</body>
+</html>

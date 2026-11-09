@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="#{editar.titulo}">Editar</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body>
+<div th:replace="~{fragments :: menu}"></div>
+
+<main>
+    <h1 th:text="#{editar.titulo}"></h1>
+
+    <form method="post" th:action="@{/portfolio/editar}" th:object="${formulario}">
+        <!-- Botón por defecto: si se pulsa Intro en un campo, se genera la vista previa
+             y no se ejecuta por error el primer botón "Quitar" -->
+        <button type="submit" name="accion" value="vista" hidden></button>
+
+        <p class="error-summary" th:if="${#fields.hasErrors('*')}" th:text="#{editar.revisa}"></p>
+
+        <h2 th:text="#{editar.datosPersonales}"></h2>
+
+        <div>
+            <label for="nombre" th:text="#{editar.nombre}"></label>
+            <input type="text" th:field="*{nombre}" required>
+            <span th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></span>
+        </div>
+        <div>
+            <label for="titular" th:text="#{editar.titular}"></label>
+            <input type="text" th:field="*{titular}" required>
+            <span th:if="${#fields.hasErrors('titular')}" th:errors="*{titular}"></span>
+        </div>
+        <div>
+            <label for="presentacion" th:text="#{editar.presentacion}"></label>
+            <textarea th:field="*{presentacion}" required></textarea>
+            <span th:if="${#fields.hasErrors('presentacion')}" th:errors="*{presentacion}"></span>
+        </div>
+        <div>
+            <label for="ciudad" th:text="#{editar.ciudad}"></label>
+            <input type="text" th:field="*{ciudad}">
+        </div>
+        <div>
+            <label for="email" th:text="#{editar.email}"></label>
+            <input type="email" th:field="*{email}">
+            <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
+        </div>
+
+        <h2 th:text="#{editar.proyectos}"></h2>
+        <p th:text="#{editar.contador(${#lists.size(formulario.proyectos)}, ${maxProyectos})}"></p>
+        <p th:if="${#fields.hasErrors('proyectos')}" th:errors="*{proyectos}"></p>
+
+        <fieldset th:each="p, st : *{proyectos}">
+            <legend th:text="#{editar.proyecto(${st.count})}"></legend>
+
+            <div>
+                <label th:for="|proyectos${st.index}.titulo|" th:text="#{editar.tituloProyecto}"></label>
+                <input type="text" th:field="*{proyectos[__${st.index}__].titulo}">
+                <span th:if="${#fields.hasErrors('proyectos[__${st.index}__].titulo')}"
+                      th:errors="*{proyectos[__${st.index}__].titulo}"></span>
+            </div>
+            <div>
+                <label th:for="|proyectos${st.index}.anio|" th:text="#{editar.anio}"></label>
+                <input type="number" th:field="*{proyectos[__${st.index}__].anio}">
+                <span th:if="${#fields.hasErrors('proyectos[__${st.index}__].anio')}"
+                      th:errors="*{proyectos[__${st.index}__].anio}"></span>
+            </div>
+            <div>
+                <label th:for="|proyectos${st.index}.categoria|" th:text="#{editar.categoria}"></label>
+                <select th:field="*{proyectos[__${st.index}__].categoria}">
+                    <option value="" th:text="#{editar.seleccione}"></option>
+                    <option th:each="c : ${categorias}" th:value="${c}" th:text="#{|categoria.${c}|}"></option>
+                </select>
+                <span th:if="${#fields.hasErrors('proyectos[__${st.index}__].categoria')}"
+                      th:errors="*{proyectos[__${st.index}__].categoria}"></span>
+            </div>
+            <div>
+                <label th:for="|proyectos${st.index}.estado|" th:text="#{editar.estado}"></label>
+                <select th:field="*{proyectos[__${st.index}__].estado}">
+                    <option value="" th:text="#{editar.seleccione}"></option>
+                    <option th:each="e : ${estados}" th:value="${e}" th:text="#{|estado.${e}|}"></option>
+                </select>
+                <span th:if="${#fields.hasErrors('proyectos[__${st.index}__].estado')}"
+                      th:errors="*{proyectos[__${st.index}__].estado}"></span>
+            </div>
+            <div>
+                <label th:for="|proyectos${st.index}.descripcion|" th:text="#{editar.descripcion}"></label>
+                <textarea th:field="*{proyectos[__${st.index}__].descripcion}"></textarea>
+                <span th:if="${#fields.hasErrors('proyectos[__${st.index}__].descripcion')}"
+                      th:errors="*{proyectos[__${st.index}__].descripcion}"></span>
+            </div>
+
+            <button type="submit" name="accion" th:value="|quitar-${st.index}|" th:text="#{editar.quitar}"></button>
+        </fieldset>
+
+        <button type="submit" name="accion" value="anadir"
+                th:if="${#lists.size(formulario.proyectos) < maxProyectos}"
+                th:text="#{editar.anadir}"></button>
+        <p th:unless="${#lists.size(formulario.proyectos) < maxProyectos}" th:text="#{editar.limite}"></p>
+
+        <div>
+            <button type="submit" name="accion" value="vista" th:text="#{editar.vista}"></button>
+        </div>
+    </form>
+</main>
+</body>
+</html>

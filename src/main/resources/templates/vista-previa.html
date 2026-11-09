@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="#{vista.titulo}">Vista previa</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body>
+<div th:replace="~{fragments :: menu}"></div>
+
+<main>
+    <h1 th:text="#{vista.titulo}"></h1>
+
+    <section>
+        <h2 th:text="${formulario.nombre}"></h2>
+        <p th:text="${formulario.titular}"></p>
+        <p th:text="${formulario.presentacion}"></p>
+        <p th:if="${formulario.ciudad != null and !formulario.ciudad.isBlank()}"
+           th:text="${formulario.ciudad}"></p>
+        <p th:if="${formulario.email != null and !formulario.email.isBlank()}"
+           th:text="${formulario.email}"></p>
+    </section>
+
+    <section>
+        <h2 th:text="#{editar.proyectos}"></h2>
+        <p th:if="${proyectosValidos.isEmpty()}" th:text="#{vista.sinProyectos}"></p>
+
+        <article th:each="p : ${proyectosValidos}">
+            <h2 th:text="${p.titulo}"></h2>
+            <p>
+                <span th:text="${p.anio}"></span> ·
+                <span th:text="#{|categoria.${p.categoria.name()}|}"></span>
+            </p>
+            <span th:switch="${p.estado.name()}">
+                <span th:case="'EN_CURSO'" class="etiqueta-verde" th:text="#{estado.EN_CURSO}"></span>
+                <span th:case="'TERMINADO'" class="etiqueta-gris" th:text="#{estado.TERMINADO}"></span>
+            </span>
+            <p th:text="${p.descripcion}"></p>
+        </article>
+    </section>
+
+    <a th:href="@{/portfolio/editar}" th:text="#{vista.volver}"></a>
+</main>
+</body>
+</html>
